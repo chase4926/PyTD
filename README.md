@@ -19,11 +19,4 @@ See DesignDoc.odt for more information about the game-plan.
 Required to run:
 
 + Python 2.7 (Tested using 2.7.10)
-
-
-Hardware:
--Input
--Output
-Software:
--Language
--Dependencies
++ Pygame 1.9.1 (Or above probably will work)
