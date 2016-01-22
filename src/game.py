@@ -35,13 +35,13 @@ random.seed(seed)
 # Pygame setup
 pygame.init()
 
-# Various varibles
-WIDTH = 1920
-HEIGHT = 1080
+# Various varibles - Default config settings
+WIDTH = 1280
+HEIGHT = 720
 SCALE = True
 SMOOTH_SCALE = False
 KEEP_ASPECT = True
-FULLSCREEN = True
+FULLSCREEN = False
 EDITOR = False
 
 
@@ -177,6 +177,18 @@ class Controller:
     #window.blit(self.terrain.surface, (-self.terrain_x, -self.terrain_y))
 
 
+# Load config
+try:
+  with open('../config.yml', 'r') as f:
+    CONFIG = yaml.load(f)
+  WIDTH = CONFIG.get('width', 1280)
+  HEIGHT = CONFIG.get('height', 720)
+  SCALE = CONFIG.get('scale', True)
+  SMOOTH_SCALE = CONFIG.get('smooth_scale', False)
+  KEEP_ASPECT = CONFIG.get('keep_aspect', True)
+  FULLSCREEN = CONFIG.get('fullscreen', False)
+except FileNotFoundError:
+  print("Config file doesn't exist! Using default settings.")
 # Parse arguments
 parse_options()
 # Initialize the window
