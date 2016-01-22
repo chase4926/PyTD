@@ -42,6 +42,7 @@ SCALE = True
 SMOOTH_SCALE = False
 KEEP_ASPECT = True
 FULLSCREEN = True
+EDITOR = False
 
 
 def force_close():
@@ -53,7 +54,12 @@ def parse_options():
     opts, args = getopt.getopt(sys.argv[1:],"he",["help", "editor"])
   except getopt.GetoptError:
     force_close()
-  print(opts)
+  for opt, arg in opts:
+    if opt in ("-h", "--help"):
+      print("\nUsage: game.py {arg}\n\n-h / --help\tThe screen you are viewing now\n-e / --editor\tLevel Editor")
+      force_close()
+    elif opt in ("-e", "--editor"):
+      EDITOR = True
 
 
 class GameWindow:
