@@ -19,7 +19,8 @@ from pygame.locals import *
 # Local library imports
 from lib_misc import *
 import lib_medialoader as media
-# Local Classes
+# Local Modules
+import config
 import editor
 
 # Make sure we're in the right directory
@@ -34,15 +35,6 @@ random.seed(seed)
 
 # Pygame setup
 pygame.init()
-
-# Various varibles - Default config settings
-WIDTH = 1280
-HEIGHT = 720
-SCALE = True
-SMOOTH_SCALE = False
-KEEP_ASPECT = True
-FULLSCREEN = False
-EDITOR = False
 
 
 def force_close():
@@ -59,37 +51,48 @@ def parse_options():
       print("\nUsage: game.py {arg}\n\n-h / --help\tThe screen you are viewing now\n-e / --editor\tLevel Editor")
       force_close()
     elif opt in ("-e", "--editor"):
-      global EDITOR
-      EDITOR = True
+      config.EDITOR = True
 
 
 class GameWindow:
   def __init__(self):
-    # Global Declarations
-    global SCALE
     # Set up the window
     flags = pygame.DOUBLEBUF
-    if FULLSCREEN:
+    if config.FULLSCREEN:
       flags = flags | pygame.FULLSCREEN
-    self.displaysurf = pygame.display.set_mode((WIDTH, HEIGHT), flags)
+    self.displaysurf = pygame.display.set_mode((config.WIDTH, config.HEIGHT), flags)
     self.displaysurf.fill((0,0,0)) # Background color
     self.drawsurf = pygame.Surface((1280, 720))
-    pygame.display.set_caption("PyTD")
     # Scaling
-    self.scale_res = get_new_resolution(WIDTH, HEIGHT, 1280, 720, scale=SCALE, keep_aspect=KEEP_ASPECT)
+    self.scale_res = get_new_resolution(config.WIDTH, config.HEIGHT,
+                                        1280, 720, scale=config.SCALE,
+                                        keep_aspect=config.KEEP_ASPECT)
     self.scalesurf = pygame.Surface((self.scale_res[0], self.scale_res[1]))
     # Calculate image panning
-    self.pan = ( int(round((WIDTH-self.scale_res[0])/2)), int(round((HEIGHT-self.scale_res[1])/2)) )
+    self.pan = ( int(round((config.WIDTH-self.scale_res[0])/2)), int(round((config.HEIGHT-self.scale_res[1])/2)) )
     # Disable scaling if it isn't needed
     if self.scale_res == (1280, 720):
-      SCALE = False
+      config.SCALE = False
     # Window object init
     self.clock = pygame.time.Clock()
-    if EDITOR:
+    if config.EDITOR:
+      pygame.display.set_caption("PyTD -- EDITOR")
       self.controller = editor.Controller(self)
-      print('using the editor controller')
     else:
+      pygame.display.set_caption("PyTD")
       self.controller = Controller(self)
+
+  def get_mouse_pos(self):
+    # This returns (mouse_x,mouse_y) adjusted for window settings
+    mousex, mousey = pygame.mouse.get_pos()
+    if config.SCALE:
+      # Must adjust for panning and then adjust for the scale
+      return (round(((mousex-self.pan[0])*1280)/self.scale_res[0]),
+              round(((mousey-self.pan[1])* 720)/self.scale_res[1]))
+    else:
+      # Must only adjust for panning
+      # This method is much faster and more accurate
+      return mousex-self.pan[0], mousey-self.pan[1]
 
   def blit(self, surface, coords):
     self.drawsurf.blit(surface, coords)
@@ -107,8 +110,8 @@ class GameWindow:
       # Let the controller draw everything
       self.controller.draw()
       # Blit either the scaled image or drawsurf to display
-      if SCALE:
-        if SMOOTH_SCALE:
+      if config.SCALE:
+        if config.SMOOTH_SCALE:
           pygame.transform.smoothscale(self.drawsurf, self.scale_res, self.scalesurf)
         else:
           pygame.transform.scale(self.drawsurf, self.scale_res, self.scalesurf)
@@ -168,16 +171,22 @@ class Controller:
 try:
   with open('../config.yml', 'r') as f:
     CONFIG = yaml.load(f)
-  WIDTH = CONFIG.get('width', 1280)
-  HEIGHT = CONFIG.get('height', 720)
-  SCALE = CONFIG.get('scale', True)
-  SMOOTH_SCALE = CONFIG.get('smooth_scale', False)
-  KEEP_ASPECT = CONFIG.get('keep_aspect', True)
-  FULLSCREEN = CONFIG.get('fullscreen', False)
+  config.WIDTH = CONFIG.get('width', 1280)
+  config.HEIGHT = CONFIG.get('height', 720)
+  config.SCALE = CONFIG.get('scale', True)
+  config.SMOOTH_SCALE = CONFIG.get('smooth_scale', False)
+  config.KEEP_ASPECT = CONFIG.get('keep_aspect', True)
+  config.FULLSCREEN = CONFIG.get('fullscreen', False)
 except FileNotFoundError:
   print("Config file doesn't exist! Using default settings.")
 # Parse arguments
 parse_options()
+
+
+config.WIDTH = 720
+config.HEIGHT = 720
+
+
 # Initialize the window
 window = GameWindow()
 # Start 'er up!
