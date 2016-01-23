@@ -81,6 +81,9 @@ class GameWindow:
       pygame.display.set_caption("PyTD")
       self.controller = Controller(self)
 
+  def get_fps(self):
+    return self.clock.get_fps()
+
   def close(self):
     self.running = False
 
@@ -133,9 +136,8 @@ class GameWindow:
 class Controller:
   def __init__(self, window):
     self.window = window
-    #self.world = World()
     #DELETEME---
-    self.image = media.get("test.png")
+    self.image = media.get("test.png").convert()
     #---
 
   def key_pressed(self, key):
@@ -152,21 +154,6 @@ class Controller:
     #DELETEME---
     self.window.blit(self.image, (0,0))
     #---
-    #self.world.draw(self.window)
-
-
-#class World:
-  #def __init__(self):
-    #self.terrain = Terrain(width=80, height=160)
-    #self.terrain_x = 0
-    #self.terrain_y = 0
-
-  #def pan(self, x_offset=0, y_offset=0):
-    #self.terrain_x += x_offset
-    #self.terrain_y += y_offset
-
-  #def draw(self, window):
-    #window.blit(self.terrain.surface, (-self.terrain_x, -self.terrain_y))
 
 
 # Parse arguments

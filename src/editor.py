@@ -43,10 +43,26 @@ class Editor:
     self.window = window
     self.mode = 0 # 0 = No mode, 1 = City mode, 2 = Route mode
     self.load_level("level0")
+    # Font
+    self.font = pygame.font.Font("freesansbold.ttf", 32)
+    # City Mode
+    self.city_surf = pygame.Surface((1280, 720))
+    self.city_color = (255, 0, 0)
+    self.city_size = 100
+    self.redraw_city()
+
+  def redraw_city(self):
+    purple = (255, 0, 255)
+    # Fill with purple (the transparency color)
+    self.city_surf.fill(purple)
+    pygame.draw.circle(self.city_surf, self.city_color,
+                       self.window.get_mouse_pos(), self.city_size)
+    self.city_surf.set_colorkey(purple)
 
   def load_level(self, level_name):
-    self.layer0 = media.get("levels/{}/layer0.png".format(level_name))
-    self.layer1 = media.get("levels/{}/layer1.png".format(level_name))
+    # Convert the first layer to make it faster to blit!
+    self.layer0 = media.get("levels/{}/layer0.png".format(level_name)).convert()
+    self.layer1 = media.get("levels/{}/layer1.png".format(level_name)).convert_alpha()
 
   def change_mode(self, mode):
     if mode == 0:
@@ -78,9 +94,12 @@ class Editor:
         self.change_mode(2)
 
   def update(self):
-    pass
+    self.redraw_city()
+    #pass
 
   def draw(self):
     self.window.blit(self.layer0, (0,0))
     self.window.blit(self.layer1, (0,0))
+    self.window.blit(self.city_surf, (0,0))
+    self.window.blit(self.font.render(str(self.window.get_fps()), True, (255, 255, 255)), (32,32))
 
