@@ -20,7 +20,7 @@ from pygame.locals import *
 from lib_misc import *
 import lib_medialoader as media
 # Local Classes
-from . import editor
+import editor
 
 # Make sure we're in the right directory
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -59,11 +59,14 @@ def parse_options():
       print("\nUsage: game.py {arg}\n\n-h / --help\tThe screen you are viewing now\n-e / --editor\tLevel Editor")
       force_close()
     elif opt in ("-e", "--editor"):
+      global EDITOR
       EDITOR = True
 
 
 class GameWindow:
   def __init__(self):
+    # Global Declarations
+    global SCALE
     # Set up the window
     flags = pygame.DOUBLEBUF
     if FULLSCREEN:
@@ -79,10 +82,14 @@ class GameWindow:
     self.pan = ( int(round((WIDTH-self.scale_res[0])/2)), int(round((HEIGHT-self.scale_res[1])/2)) )
     # Disable scaling if it isn't needed
     if self.scale_res == (1280, 720):
-      SCALING = False
+      SCALE = False
     # Window object init
     self.clock = pygame.time.Clock()
-    self.controller = Controller(self)
+    if EDITOR:
+      self.controller = editor.Controller(self)
+      print('using the editor controller')
+    else:
+      self.controller = Controller(self)
 
   def blit(self, surface, coords):
     self.drawsurf.blit(surface, coords)
@@ -116,7 +123,6 @@ class Controller:
   def __init__(self, window):
     self.window = window
     #self.world = World()
-    #self.mousetooltip = MouseToolTip(self.world)
     #DELETEME---
     self.image = media.get("test.png")
     #---
@@ -142,25 +148,6 @@ class Controller:
     self.window.blit(self.image, (0,0))
     #---
     #self.world.draw(self.window)
-    ## Remove eventually
-    #self.mousetooltip.draw(self.window)
-
-
-#class MouseToolTip:
-  #def __init__(self, world):
-    #self.world = world
-    #self.terrain = world.terrain
-    #self.font = pygame.font.Font("freesansbold.ttf", 32)
-
-  #def get_current(self):
-    #mousex, mousey = pygame.mouse.get_pos()
-    #x = int(round(float(mousex + self.world.terrain_x - 8) / self.terrain.tile_size))
-    #y = int(round(float(mousey + self.world.terrain_y - 8) / self.terrain.tile_size))
-    #return self.terrain.get(x, y)
-
-  #def draw(self, window):
-    #text = self.font.render(self.get_current(), True, (255, 255, 255))
-    #window.blit(text, (32, 32))
 
 
 #class World:
