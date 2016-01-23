@@ -5,8 +5,6 @@ PyTD: game.py
 --------------------------------
 
 Designed around 1280x720 (16:9).
-Planned: Will adjust automatically to other resolutions with or without 
-scaling.
 '''
 
 # System imports
@@ -16,15 +14,16 @@ import yaml
 # Pygame imports
 import pygame
 from pygame.locals import *
+
+# Make sure we're in the right directory before importing locally
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
 # Local library imports
 from lib_misc import *
 import lib_medialoader as media
 # Local Modules
 import config
 import editor
-
-# Make sure we're in the right directory
-os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 # Load images
 media.load_images("../images/")
@@ -170,18 +169,6 @@ class Controller:
     #window.blit(self.terrain.surface, (-self.terrain_x, -self.terrain_y))
 
 
-# Load config
-try:
-  with open('../config.yml', 'r') as f:
-    CONFIG = yaml.load(f)
-  config.WIDTH = CONFIG.get('width', 1280)
-  config.HEIGHT = CONFIG.get('height', 720)
-  config.SCALE = CONFIG.get('scale', True)
-  config.SMOOTH_SCALE = CONFIG.get('smooth_scale', False)
-  config.KEEP_ASPECT = CONFIG.get('keep_aspect', True)
-  config.FULLSCREEN = CONFIG.get('fullscreen', False)
-except FileNotFoundError:
-  print("Config file doesn't exist! Using default settings.")
 # Parse arguments
 parse_options()
 # Initialize the window
