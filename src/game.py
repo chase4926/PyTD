@@ -181,12 +181,6 @@ except FileNotFoundError:
   print("Config file doesn't exist! Using default settings.")
 # Parse arguments
 parse_options()
-
-
-config.WIDTH = 720
-config.HEIGHT = 720
-
-
 # Initialize the window
 window = GameWindow()
 # Start 'er up!
