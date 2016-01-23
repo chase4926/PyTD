@@ -1,6 +1,6 @@
 
 #PyTD#
-A /unique/ Python Tower Defense game.
+A *unique* Python Tower Defense game.
 
 
 ---

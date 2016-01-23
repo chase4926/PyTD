@@ -20,7 +20,7 @@ from pygame.locals import *
 from lib_misc import *
 import lib_medialoader as media
 # Local Classes
-#-
+from . import editor
 
 # Make sure we're in the right directory
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
