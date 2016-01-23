@@ -5,6 +5,9 @@ PyTD: config.py
 --------------------------------
 
 Shared global variables.
+
+DO NOT MAKE CHANGES TO THIS FILE! These are the default values, they
+are only used when the config.yml file is not found!
 '''
 
 # Various varibles

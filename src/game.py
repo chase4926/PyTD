@@ -76,11 +76,14 @@ class GameWindow:
     # Window object init
     self.clock = pygame.time.Clock()
     if config.EDITOR:
-      pygame.display.set_caption("PyTD -- EDITOR")
+      pygame.display.set_caption("PyTD - EDITOR")
       self.controller = editor.Controller(self)
     else:
       pygame.display.set_caption("PyTD")
       self.controller = Controller(self)
+
+  def close(self):
+    self.running = False
 
   def get_mouse_pos(self):
     # This returns (mouse_x,mouse_y) adjusted for window settings
@@ -103,6 +106,12 @@ class GameWindow:
     while self.running:
       # Keep the game running smoothly
       self.clock.tick(60) # Ticks per second
+      # Handle events and distribute key presses
+      for event in pygame.event.get():
+        if event.type == QUIT:
+          self.close()
+        if event.type == KEYDOWN:
+          self.controller.key_pressed(event.key)
       # Update the controller
       self.controller.update()
       # Fill with black to get rid of previous blits
@@ -130,20 +139,14 @@ class Controller:
     self.image = media.get("test.png")
     #---
 
+  def key_pressed(self, key):
+    if key == K_ESCAPE:
+      self.window.close()
+
   def update(self):
-    # Key is down (Holding down a key will keep triggering)
-    keys_pressed = pygame.key.get_pressed()
-    #if keys_pressed[pygame.K_DOWN]:
-      #self.world.pan(y_offset=4)
-    #if keys_pressed[pygame.K_UP]:
-      #self.world.pan(y_offset=-4)
-    # Key presses (Holding down a key will only trigger once)
-    for event in pygame.event.get():
-        if event.type == QUIT:
-          self.window.running = False
-        if event.type == KEYDOWN:
-          if event.key == K_ESCAPE:
-            self.window.running = False
+    ## Key is down (Holding down a key will keep triggering)
+    #keys_pressed = pygame.key.get_pressed()
+    pass
 
   def draw(self):
     # All the draws:
